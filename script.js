@@ -5,7 +5,14 @@ let startTime;
 let moveCount = 0;
 let canvas;
 
-// Запуск игры
+function setup() {
+    let canvasSize = Math.min(windowWidth * 0.8, windowHeight * 0.6);
+    canvas = createCanvas(canvasSize, canvasSize);
+    canvas.parent('canvas-container'); // Убедимся, что холст создаётся в нужном месте
+    createTiles();
+    redraw();
+}
+
 function startGame() {
     document.getElementById("menu").style.display = "none";
     document.getElementById("game-container").style.display = "block";
@@ -13,7 +20,7 @@ function startGame() {
     let canvasSize = Math.min(windowWidth * 0.8, windowHeight * 0.6);
     if (!canvas) {
         canvas = createCanvas(canvasSize, canvasSize);
-        canvas.parent('canvas-container'); // Привязываем холст
+        canvas.parent('canvas-container');
     } else {
         resizeCanvas(canvasSize, canvasSize);
     }
@@ -21,10 +28,9 @@ function startGame() {
     createTiles();
     moveCount = 0;
     startTime = new Date();
-    redraw();
+    loop(); // Включаем отрисовку
 }
 
-// Создаём плитки
 function createTiles() {
     let numbers = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
     numbers.push(null);
@@ -41,7 +47,6 @@ function createTiles() {
     }
 }
 
-// Отрисовка игры
 function draw() {
     background(220);
     let tileSize = width / gridSize;
@@ -61,7 +66,7 @@ function draw() {
     }
 }
 
-// Перемешивание плиток
+// Функция для перемешивания
 function shuffleTiles() {
     for (let i = 0; i < 1000; i++) {
         let directions = [
@@ -95,7 +100,7 @@ function checkWin() {
     return JSON.stringify(tiles.flat()) === JSON.stringify(expected);
 }
 
-// Перемешивание массива (Фишки)
+// Функция для перемешивания массива
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));

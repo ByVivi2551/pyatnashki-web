@@ -39,6 +39,8 @@ button:hover {
 /* Контейнер для canvas */
 #canvas-container {
     margin-top: 15px;
+    display: flex;
+    justify-content: center;
 }
 
 /* Холст игры (canvas) */
