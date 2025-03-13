@@ -6,7 +6,7 @@ let moveCount = 0;
 let canvas;
 let touchStartX, touchStartY;
 
-// ❗ Отключаем скроллинг страницы при свайпах (ТОЛЬКО НА CANVAS)
+// ❗ Отключаем скроллинг страницы при свайпе на игровом поле
 document.addEventListener('touchmove', function(event) {
     if (event.target.closest("canvas")) {
         event.preventDefault();
@@ -96,11 +96,11 @@ function moveTile(dx, dy) {
     }
 }
 
-// 💻 Управление кликами на ПК
+// 💻 Управление мышью на ПК (исправлено!)
 function mousePressed() {
     let tileSize = width / gridSize;
-    let x = Math.floor(mouseX / tileSize);
-    let y = Math.floor(mouseY / tileSize);
+    let x = Math.floor((mouseX - canvas.elt.offsetLeft) / tileSize);
+    let y = Math.floor((mouseY - canvas.elt.offsetTop) / tileSize);
 
     if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
         if (Math.abs(x - emptyTile.x) + Math.abs(y - emptyTile.y) === 1) {
