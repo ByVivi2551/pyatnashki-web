@@ -1,31 +1,28 @@
+document.addEventListener('touchmove', function(event) {
+    event.preventDefault(); // ❗ Отключаем скроллинг страницы при свайпе
+}, { passive: false });
+
 let gridSize = 4;
 let tiles = [];
 let emptyTile = { x: gridSize - 1, y: gridSize - 1 };
 let startTime;
 let moveCount = 0;
 let canvas;
-let touchStartX, touchStartY; // Для мобильных свайпов
+let touchStartX, touchStartY;
 
 function setup() {
     let canvasSize = Math.min(windowWidth * 0.8, windowHeight * 0.6);
     canvas = createCanvas(canvasSize, canvasSize);
     canvas.parent('canvas-container');
     createTiles();
-    draw();
 }
 
-// Запуск игры
 function startGame() {
     document.getElementById("menu").style.display = "none";
     document.getElementById("game-container").style.display = "block";
 
     let canvasSize = Math.min(windowWidth * 0.8, windowHeight * 0.6);
-    if (!canvas) {
-        canvas = createCanvas(canvasSize, canvasSize);
-        canvas.parent('canvas-container');
-    } else {
-        resizeCanvas(canvasSize, canvasSize);
-    }
+    resizeCanvas(canvasSize, canvasSize);
 
     createTiles();
     moveCount = 0;
@@ -33,7 +30,6 @@ function startGame() {
     loop();
 }
 
-// Создание массива плиток
 function createTiles() {
     let numbers = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
     numbers.push(null);
@@ -50,7 +46,6 @@ function createTiles() {
     }
 }
 
-// Отрисовка игры
 function draw() {
     background(220);
     let tileSize = width / gridSize;
@@ -70,7 +65,6 @@ function draw() {
     }
 }
 
-// Перемешивание плиток
 function shuffleTiles() {
     for (let i = 0; i < 1000; i++) {
         let directions = [
@@ -84,7 +78,6 @@ function shuffleTiles() {
     }
 }
 
-// Двигаем плитку
 function moveTile(dx, dy) {
     let newX = emptyTile.x + dx;
     let newY = emptyTile.y + dy;
@@ -97,7 +90,7 @@ function moveTile(dx, dy) {
     }
 }
 
-// Обработка кликов по плиткам
+// 💻 Обрабатываем клики по плиткам (ПК)
 function mousePressed() {
     let tileSize = width / gridSize;
     let x = Math.floor(mouseX / tileSize);
@@ -105,18 +98,19 @@ function mousePressed() {
 
     if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
         if (Math.abs(x - emptyTile.x) + Math.abs(y - emptyTile.y) === 1) {
-            moveTile(x - emptyTile.x, y - emptyTile.y);
+            moveTile(emptyTile.x - x, emptyTile.y - y);
         }
     }
 }
 
-// Обработка свайпов (мобильные устройства)
-function touchStarted() {
+// 📱 Обрабатываем свайпы (мобильные устройства)
+function touchStarted(event) {
     touchStartX = mouseX;
     touchStartY = mouseY;
+    return false; // ❗ Остановим всплытие событий для предотвращения скролла
 }
 
-function touchEnded() {
+function touchEnded(event) {
     let dx = mouseX - touchStartX;
     let dy = mouseY - touchStartY;
 
@@ -129,16 +123,15 @@ function touchEnded() {
     }
 
     if (checkWin()) showWinScreen();
+    return false; // ❗ Останавливаем обработку события
 }
 
-// Проверка победы
 function checkWin() {
     let expected = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
     expected.push(null);
     return JSON.stringify(tiles.flat()) === JSON.stringify(expected);
 }
 
-// Перемешивание массива (фишек)
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
