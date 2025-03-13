@@ -3,16 +3,9 @@ let tiles = [];
 let emptyTile = { x: gridSize - 1, y: gridSize - 1 };
 let startTime;
 let moveCount = 0;
-let selectedTheme = "light";
-let touchStartX, touchStartY;
 let canvas;
 
-// Делаем игровое поле подстраивающимся под экран
-function setup() {
-    noLoop(); // Останавливаем автоматический рендеринг
-}
-
-// Функция для запуска игры после нажатия "Старт"
+// Запуск игры
 function startGame() {
     document.getElementById("menu").style.display = "none";
     document.getElementById("game-container").style.display = "block";
@@ -28,10 +21,10 @@ function startGame() {
     createTiles();
     moveCount = 0;
     startTime = new Date();
-    loop(); // Запускаем отрисовку игры
+    loop();
 }
 
-// Функция для создания плиток
+// Создаём плитки
 function createTiles() {
     let numbers = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
     numbers.push(null);
@@ -48,16 +41,16 @@ function createTiles() {
     }
 }
 
-// Функция для отрисовки поля
+// Отрисовка игры
 function draw() {
-    background(selectedTheme === "dark" ? 50 : 220);
+    background(220);
     let tileSize = width / gridSize;
 
     for (let y = 0; y < gridSize; y++) {
         for (let x = 0; x < gridSize; x++) {
             let value = tiles[y][x];
             if (value !== null) {
-                fill(selectedTheme === "dark" ? 100 : 0, 100, 255);
+                fill(0, 100, 255);
                 rect(x * tileSize, y * tileSize, tileSize, tileSize, 10);
                 fill(255);
                 textSize(tileSize * 0.5);
@@ -66,4 +59,25 @@ function draw() {
             }
         }
     }
+}
+
+// Перемешивание плиток
+function shuffleTiles() {
+    for (let i = 0; i < 1000; i++) {
+        let directions = [
+            { dx: 0, dy: 1 },
+            { dx: 0, dy: -1 },
+            { dx: 1, dy: 0 },
+            { dx: -1, dy: 0 }
+        ];
+        let move = random(directions);
+        moveTile(move.dx, move.dy);
+    }
+}
+
+// Проверка победы
+function checkWin() {
+    let expected = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
+    expected.push(null);
+    return JSON.stringify(tiles.flat()) === JSON.stringify(expected);
 }
