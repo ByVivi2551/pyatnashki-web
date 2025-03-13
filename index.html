@@ -8,9 +8,25 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Пятнашки</h1>
-    <div id="game-container"></div>
-    <button onclick="shuffleTiles()">Перемешать</button>
+    <div id="menu">
+        <h1>Выберите тему</h1>
+        <button onclick="setTheme('light')">Светлая</button>
+        <button onclick="setTheme('dark')">Тёмная</button>
+        <button onclick="startGame()">Старт</button>
+    </div>
+
+    <div id="game-container" style="display: none;">
+        <h1>Пятнашки</h1>
+        <button onclick="shuffleTiles()">Перемешать</button>
+    </div>
+
+    <div id="win-screen" style="display: none;">
+        <h2>Ты молодец! 🎉</h2>
+        <p id="move-count"></p>
+        <p id="time-count"></p>
+        <button onclick="backToMenu()">ОК</button>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
