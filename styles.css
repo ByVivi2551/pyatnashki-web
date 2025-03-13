@@ -2,6 +2,13 @@ body {
     text-align: center;
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 
 h1, h2 {
@@ -10,11 +17,12 @@ h1, h2 {
 
 button {
     margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 12px 25px;
+    font-size: 18px;
     background-color: #007BFF;
     color: white;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
 }
 
@@ -22,29 +30,16 @@ button:hover {
     background-color: #0056b3;
 }
 
-/* Темная тема */
-.dark-mode {
-    background-color: #333;
-    color: white;
+/* Центрирование кнопок */
+#game-container, #win-screen, #menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.dark-mode button {
-    background-color: #ff4444;
-}
-
-.dark-mode button:hover {
-    background-color: #cc0000;
-}
-
-/* Экран победы */
-#win-screen {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: green;
-    color: white;
-    padding: 30px;
-    border-radius: 10px;
+/* Для мобильных устройств */
+@media (max-width: 600px) {
+    button {
+        width: 80%;
+    }
 }
