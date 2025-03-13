@@ -1,3 +1,7 @@
+document.addEventListener('touchmove', function(event) {
+    event.preventDefault(); // ❗ Отключаем скроллинг страницы при свайпе
+}, { passive: false });
+
 let gridSize = 4;
 let tiles = [];
 let emptyTile = { x: gridSize - 1, y: gridSize - 1 };
@@ -5,17 +9,6 @@ let startTime;
 let moveCount = 0;
 let canvas;
 let touchStartX, touchStartY;
-
-// ❗ Отключаем скролл страницы на мобильных, но не ломаем управление
-document.addEventListener('touchstart', function(event) {
-    if (event.target.tagName !== "CANVAS") return;
-    event.preventDefault();
-}, { passive: false });
-
-document.addEventListener('touchmove', function(event) {
-    if (event.target.tagName !== "CANVAS") return;
-    event.preventDefault();
-}, { passive: false });
 
 function setup() {
     let canvasSize = Math.min(windowWidth * 0.8, windowHeight * 0.6);
@@ -110,16 +103,14 @@ function mousePressed() {
     }
 }
 
-// 📱 Обрабатываем свайпы (мобильные устройства) и предотвращаем скролл
+// 📱 Обрабатываем свайпы (мобильные устройства)
 function touchStarted(event) {
-    if (event.target.tagName !== "CANVAS") return;
     touchStartX = mouseX;
     touchStartY = mouseY;
+    return false; // ❗ Остановим всплытие событий для предотвращения скролла
 }
 
 function touchEnded(event) {
-    if (event.target.tagName !== "CANVAS") return;
-    
     let dx = mouseX - touchStartX;
     let dy = mouseY - touchStartY;
 
@@ -130,6 +121,9 @@ function touchEnded(event) {
         if (dy > 30) moveTile(0, -1); // Свайп вниз
         if (dy < -30) moveTile(0, 1); // Свайп вверх
     }
+
+    if (checkWin()) showWinScreen();
+    return false; // ❗ Останавливаем обработку события
 }
 
 function checkWin() {
