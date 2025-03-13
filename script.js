@@ -6,7 +6,7 @@ let moveCount = 0;
 let canvas;
 let touchStartX, touchStartY;
 
-// ❗ Отключаем скроллинг страницы при свайпе на игровом поле
+// ❗ Отключаем скроллинг страницы при свайпах
 document.addEventListener('touchmove', function(event) {
     if (event.target.closest("canvas")) {
         event.preventDefault();
@@ -23,6 +23,7 @@ function setup() {
 function startGame() {
     document.getElementById("menu").style.display = "none";
     document.getElementById("game-container").style.display = "block";
+    document.getElementById("win-screen").style.display = "none"; // Скрываем окно победы
 
     let canvasSize = Math.min(windowWidth * 0.8, windowHeight * 0.6);
     resizeCanvas(canvasSize, canvasSize);
@@ -92,11 +93,16 @@ function moveTile(dx, dy) {
         tiles[emptyTile.y][emptyTile.x] = tiles[newY][newX];
         tiles[newY][newX] = null;
         emptyTile = { x: newX, y: newY };
+        moveCount++;
         redraw();
+        
+        if (checkWin()) {
+            showWinScreen();
+        }
     }
 }
 
-// 💻 Управление мышью на ПК (исправлено!)
+// 💻 Управление мышью на ПК
 function mousePressed() {
     let tileSize = width / gridSize;
     let x = Math.floor((mouseX - canvas.elt.offsetLeft) / tileSize);
@@ -136,6 +142,17 @@ function checkWin() {
     let expected = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
     expected.push(null);
     return JSON.stringify(tiles.flat()) === JSON.stringify(expected);
+}
+
+// 🎉 Показываем окно с победой
+function showWinScreen() {
+    let elapsedTime = ((new Date()) - startTime) / 1000;
+    document.getElementById("win-text").innerHTML = `
+        <h2>Ты молодец! 🎉</h2>
+        <p>Ходов: ${moveCount}</p>
+        <p>Время: ${elapsedTime.toFixed(2)} сек</p>
+    `;
+    document.getElementById("win-screen").style.display = "block";
 }
 
 // 🔄 Функция перемешивания массива
