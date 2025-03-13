@@ -1,7 +1,3 @@
-document.addEventListener('touchmove', function(event) {
-    event.preventDefault(); // ❗ Отключаем скроллинг страницы при свайпе
-}, { passive: false });
-
 let gridSize = 4;
 let tiles = [];
 let emptyTile = { x: gridSize - 1, y: gridSize - 1 };
@@ -9,6 +5,13 @@ let startTime;
 let moveCount = 0;
 let canvas;
 let touchStartX, touchStartY;
+
+// ❗ Отключаем скролл на мобильных при касаниях CANVAS
+document.addEventListener('touchmove', function(event) {
+    if (event.target.tagName === "CANVAS") {
+        event.preventDefault();
+    }
+}, { passive: false });
 
 function setup() {
     let canvasSize = Math.min(windowWidth * 0.8, windowHeight * 0.6);
@@ -44,6 +47,7 @@ function createTiles() {
             if (value === null) emptyTile = { x, y };
         }
     }
+    redraw();
 }
 
 function draw() {
@@ -65,6 +69,7 @@ function draw() {
     }
 }
 
+// 🔄 Перемешивание плиток
 function shuffleTiles() {
     for (let i = 0; i < 1000; i++) {
         let directions = [
@@ -78,6 +83,7 @@ function shuffleTiles() {
     }
 }
 
+// 🚀 Двигаем плитку
 function moveTile(dx, dy) {
     let newX = emptyTile.x + dx;
     let newY = emptyTile.y + dy;
@@ -90,7 +96,7 @@ function moveTile(dx, dy) {
     }
 }
 
-// 💻 Обрабатываем клики по плиткам (ПК)
+// 💻 Управление мышью на ПК
 function mousePressed() {
     let tileSize = width / gridSize;
     let x = Math.floor(mouseX / tileSize);
@@ -98,19 +104,21 @@ function mousePressed() {
 
     if (x >= 0 && x < gridSize && y >= 0 && y < gridSize) {
         if (Math.abs(x - emptyTile.x) + Math.abs(y - emptyTile.y) === 1) {
-            moveTile(emptyTile.x - x, emptyTile.y - y);
+            moveTile(x - emptyTile.x, y - emptyTile.y);
         }
     }
 }
 
 // 📱 Обрабатываем свайпы (мобильные устройства)
 function touchStarted(event) {
+    if (event.target.tagName !== "CANVAS") return;
     touchStartX = mouseX;
     touchStartY = mouseY;
-    return false; // ❗ Остановим всплытие событий для предотвращения скролла
 }
 
 function touchEnded(event) {
+    if (event.target.tagName !== "CANVAS") return;
+
     let dx = mouseX - touchStartX;
     let dy = mouseY - touchStartY;
 
@@ -121,17 +129,16 @@ function touchEnded(event) {
         if (dy > 30) moveTile(0, -1); // Свайп вниз
         if (dy < -30) moveTile(0, 1); // Свайп вверх
     }
-
-    if (checkWin()) showWinScreen();
-    return false; // ❗ Останавливаем обработку события
 }
 
+// ✅ Проверка победы
 function checkWin() {
     let expected = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
     expected.push(null);
     return JSON.stringify(tiles.flat()) === JSON.stringify(expected);
 }
 
+// 🔄 Функция перемешивания массива
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
