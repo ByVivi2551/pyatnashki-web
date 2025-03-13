@@ -1,7 +1,3 @@
-document.addEventListener('touchmove', function(event) {
-    event.preventDefault(); // ❗ Отключаем скроллинг страницы при свайпе
-}, { passive: false });
-
 let gridSize = 4;
 let tiles = [];
 let emptyTile = { x: gridSize - 1, y: gridSize - 1 };
@@ -10,6 +6,7 @@ let moveCount = 0;
 let canvas;
 let touchStartX, touchStartY;
 
+// Функция setup() вызывается автоматически
 function setup() {
     let canvasSize = Math.min(windowWidth * 0.8, windowHeight * 0.6);
     canvas = createCanvas(canvasSize, canvasSize);
@@ -17,6 +14,7 @@ function setup() {
     createTiles();
 }
 
+// Запуск игры
 function startGame() {
     document.getElementById("menu").style.display = "none";
     document.getElementById("game-container").style.display = "block";
@@ -30,6 +28,7 @@ function startGame() {
     loop();
 }
 
+// Создаём массив плиток
 function createTiles() {
     let numbers = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
     numbers.push(null);
@@ -46,6 +45,7 @@ function createTiles() {
     }
 }
 
+// Отрисовка игры
 function draw() {
     background(220);
     let tileSize = width / gridSize;
@@ -65,6 +65,7 @@ function draw() {
     }
 }
 
+// Перемешивание плиток
 function shuffleTiles() {
     for (let i = 0; i < 1000; i++) {
         let directions = [
@@ -78,6 +79,7 @@ function shuffleTiles() {
     }
 }
 
+// Двигаем плитку
 function moveTile(dx, dy) {
     let newX = emptyTile.x + dx;
     let newY = emptyTile.y + dy;
@@ -104,13 +106,12 @@ function mousePressed() {
 }
 
 // 📱 Обрабатываем свайпы (мобильные устройства)
-function touchStarted(event) {
+function touchStarted() {
     touchStartX = mouseX;
     touchStartY = mouseY;
-    return false; // ❗ Остановим всплытие событий для предотвращения скролла
 }
 
-function touchEnded(event) {
+function touchEnded() {
     let dx = mouseX - touchStartX;
     let dy = mouseY - touchStartY;
 
@@ -123,15 +124,16 @@ function touchEnded(event) {
     }
 
     if (checkWin()) showWinScreen();
-    return false; // ❗ Останавливаем обработку события
 }
 
+// Проверка победы
 function checkWin() {
     let expected = Array.from({ length: gridSize * gridSize - 1 }, (_, i) => i + 1);
     expected.push(null);
     return JSON.stringify(tiles.flat()) === JSON.stringify(expected);
 }
 
+// Функция перемешивания массива
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
